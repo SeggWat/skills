@@ -1,0 +1,23 @@
+{
+  "skill_name": "seggwat-setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a feedback button to my Next.js app so users can report bugs.",
+      "expected_output": "Checks the seggwat MCP server is connected (or gives the claude mcp add command), calls setup_project with the app name and allowed_origins covering production and localhost, puts the nextjs snippet once in app/layout.tsx inside <body>, then asks for a test submission and calls verify_setup with resource.id",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have a Vite + React SPA with Supabase auth. Set up SeggWat feedback and make sure feedback is linked to the logged-in user.",
+      "expected_output": "Uses the html snippet in index.html before </body>, calls window.SeggwatFeedback?.setUser(user.id, user.email) after sign-in and window.SeggwatFeedback?.logout() on sign-out, does not add appearance data-* attributes, verifies with verify_setup",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I installed the SeggWat widget but verify_setup keeps saying waiting. The site runs on http://localhost:5173.",
+      "expected_output": "Explains that the origin is probably missing from allowed_origins (403 on /api/v1/feedback/submit in the console), that setup_project does not change origins of an existing project, and that the origin must be added in the dashboard; also mentions checking the script is in a layout every page renders and CSP",
+      "files": []
+    }
+  ]
+}
