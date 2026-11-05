@@ -85,7 +85,16 @@ Only when it applies to the app:
 
   Use `logout()`, not `setUser(null)`: only `logout()` clears the stored email and chat token.
 
-Change nothing else. Color, position, label, screenshots and language are set in the dashboard (`resource.dashboard_url`), not in code. Adding `data-*` appearance attributes overrides the dashboard and confuses the user later.
+- **Feedback in the app's own navigation.** Only if the user asks for no floating button, or for feedback in their nav, sidebar or footer. Add `data-button-position="none"` to the script tag, and `data-seggwat-open` with an empty value to the existing nav or footer item:
+
+  ```html
+  <button data-seggwat-open>Feedback</button>
+  <button data-seggwat-open="screenshot">Report a bug</button>
+  ```
+
+  The empty form opens the widget and gets a red dot when a reply is waiting. `"screenshot"` starts a capture, which also needs `data-enable-screenshots="true"`. Module names such as `bug_report` open that form. The dot needs a signed token: mint a short-lived HS256 JWT on the backend with the project's end-user signing secret, then call `setUser(user.id, user.email, token)`. Never send the secret to the browser. Docs: https://seggwat.com/docs/features/portal-authentication
+
+Change nothing else. Color, position, label, screenshots and language are set in the dashboard (`resource.dashboard_url`), not in code. Adding `data-*` appearance attributes overrides the dashboard and confuses the user later. The navigation setup above is the one exception, because its markup depends on that attribute.
 
 ## 5. Verify
 
@@ -96,7 +105,7 @@ Change nothing else. Color, position, label, screenshots and language are set in
 `waiting` means nothing has arrived yet, and comes with a hint. `receiving` means it works. If it stays `waiting`:
 
 - The browser console shows a 403 on `/api/v1/feedback/submit` → the page's origin isn't in `allowed_origins`. Add it in the dashboard under the project's settings.
-- No button is visible → the script isn't in a layout this page renders, or a Content Security Policy blocks `https://seggwat.com`. Add `https://seggwat.com` to `script-src`, `style-src` and `connect-src`.
+- No button is visible → expected with `data-button-position="none"`: use the `data-seggwat-open` element instead. Otherwise the script isn't in a layout this page renders, or a Content Security Policy blocks `https://seggwat.com`. Add `https://seggwat.com` to `script-src`, `style-src` and `connect-src`.
 
 ## 6. Report back
 
